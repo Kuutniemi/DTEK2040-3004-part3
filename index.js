@@ -1,37 +1,13 @@
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
-//const yhteystiedot = require("./db.json");
+const yhteystiedot = require("./db.json");
+const sala = require("./juku.js");
 
 app.use(bodyParser.json());
 const cors = require("cors");
 
 app.use(cors());
-
-let yhteystiedot = {
-  persons: [
-    {
-      name: "Matti Mallikas",
-      number: "123123123",
-      id: 5,
-    },
-    {
-      name: "Joku Ukko",
-      number: "123123",
-      id: 10,
-    },
-    {
-      name: "Niujja noiui",
-      number: "1234",
-      id: 15,
-    },
-    {
-      name: "Ei logeja",
-      number: "6969669",
-      id: 16,
-    },
-  ],
-};
 
 app.get("/", (req, res) => {
   res.send("<h1>Hello World!</h1>");
@@ -89,7 +65,7 @@ app.post("/api/persons", (request, response) => {
     number: body.number,
     id: generateId(),
   };
-
+  writeFile(j);
   yhteystiedot = yhteystiedot.persons.concat(person);
 
   response.json(person);
