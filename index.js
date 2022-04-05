@@ -2,7 +2,6 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const yhteystiedot = require("./db.json");
-const sala = require("./juku.js");
 
 app.use(bodyParser.json());
 const cors = require("cors");
