@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
+require("dotenv").config();
 
 // Replace with the URL of your own database. Do not store the password on GitLab!
-const url =
-  "mongodb+srv://mongodbuser:tADmrr4f2NC2j0uo@cluster0.9rpwt.mongodb.net/myFirstDatabase";
+const url = process.env.MONGO;
 
 mongoose.connect(url);
 
