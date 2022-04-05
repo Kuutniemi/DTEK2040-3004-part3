@@ -9,11 +9,13 @@ mongoose.connect(url);
 const Yhteystieto = mongoose.model("Yhteystieto", {
   name: String,
   number: Number,
+  id: Number,
 });
 
 const yhteystieto = new Yhteystieto({
   name: process.argv[2],
   number: process.argv[3],
+  id: 77,
 });
 
 if (process.argv[2] !== undefined || process.argv[3] !== undefined) {

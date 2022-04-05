@@ -1,7 +1,28 @@
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
-const yhteystiedot = require("./db.json");
+//const yhteystiedot = require("./db.json");
+const mongoose = require("mongoose");
+require("dotenv").config();
+
+const url = process.env.MONGO;
+
+mongoose.connect(url);
+
+let data = [];
+
+const Yhteystieto = mongoose.model("Yhteystieto", {
+  name: String,
+  number: Number,
+  id: Number,
+});
+
+const update = Yhteystieto.find({}).then((result) => {
+  result.forEach((yht) => {
+    data.push(yht);
+  });
+  mongoose.connection.close();
+});
 
 app.use(bodyParser.json());
 const cors = require("cors");
@@ -13,16 +34,16 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api", (req, res) => {
-  res.json(yhteystiedot);
+  res.json(data);
 });
 
 app.get("/api/persons", (req, res) => {
-  res.json(yhteystiedot.persons);
+  res.json(data);
 });
 
 app.get("/api/persons/:id", (request, response) => {
   const id = Number(request.params.id);
-  const person = yhteystiedot.persons.find((person) => person.id === id);
+  const person = data.find((person) => person.id === id);
 
   if (person) {
     response.json(person);
@@ -33,15 +54,16 @@ app.get("/api/persons/:id", (request, response) => {
 
 app.delete("/api/persons/:id", (request, response) => {
   const id = Number(request.params.id);
-  persons = yhteystiedot.persons.filter((person) => person.id !== id);
+  persons = data.persons.filter((person) => person.id !== id);
 
   response.status(204).end();
+  update;
 });
 
 const generateId = () => {
   const maxId =
-    yhteystiedot.length > 0
-      ? yhteystiedot
+    data.length > 0
+      ? data
           .map((n) => n.id)
           .sort((a, b) => a - b)
           .reverse()[0]
@@ -50,6 +72,7 @@ const generateId = () => {
 };
 
 app.post("/api/persons", (request, response) => {
+  mongoose.connect(url);
   const body = request.body;
 
   if (body.name === undefined) {
@@ -59,15 +82,29 @@ app.post("/api/persons", (request, response) => {
     return response.status(400).json({ error: "Numero ei voi olla tyhjä" });
   }
 
-  const person = {
+  /* const person = {
     name: body.name,
     number: body.number,
     id: generateId(),
-  };
-  writeFile(j);
-  yhteystiedot = yhteystiedot.persons.concat(person);
+  }; */
 
-  response.json(person);
+  const yhteystieto = new Yhteystieto({
+    name: body.name,
+    number: body.number,
+    id: generateId(),
+  });
+
+  yhteystieto.save().then((response) => {
+    console.log(
+      "Nimi:",
+      process.argv[2],
+      "numerolla",
+      process.argv[3],
+      "lisattiin onnistuneesti"
+    );
+    update;
+    mongoose.connection.close();
+  });
 });
 
 const PORT = process.env.PORT || 3002;
