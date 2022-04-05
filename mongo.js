@@ -28,7 +28,7 @@ if (process.argv[2] !== undefined || process.argv[3] !== undefined) {
     mongoose.connection.close();
   });
 } else {
-  console.log("Yhteystiedot");
+  console.log("Yhteystiedot:");
   Yhteystieto.find({}).then((result) => {
     result.forEach((yht) => {
       console.log("Nimi", yht.name, "Numero:", yht.number);
