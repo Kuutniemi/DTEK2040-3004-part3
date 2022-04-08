@@ -22,6 +22,7 @@ const update = Yhteystieto.find({}).then((result) => {
     data.push(yht);
   });
   mongoose.connection.close();
+  //console.log(data);
 });
 
 app.use(bodyParser.json());
@@ -34,10 +35,12 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api", (req, res) => {
+  update;
   res.json(data);
 });
 
 app.get("/api/persons", (req, res) => {
+  update;
   res.json(data);
 });
 
@@ -52,7 +55,7 @@ app.get("/api/persons/:id", (request, response) => {
   }
 });
 
-app.delete("/api/persons/:id", (request, response) => {
+app.delete(`/api/persons/${id}`, (request, response) => {
   const id = Number(request.params.id);
   persons = data.persons.filter((person) => person.id !== id);
 
@@ -81,12 +84,6 @@ app.post("/api/persons", (request, response) => {
   if (body.number === undefined) {
     return response.status(400).json({ error: "Numero ei voi olla tyhjä" });
   }
-
-  /* const person = {
-    name: body.name,
-    number: body.number,
-    id: generateId(),
-  }; */
 
   const yhteystieto = new Yhteystieto({
     name: body.name,
