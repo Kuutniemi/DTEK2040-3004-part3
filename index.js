@@ -44,7 +44,7 @@ app.get("/api/persons", (req, res) => {
   res.json(data);
 });
 
-app.get("/api/persons/:id", (request, response) => {
+app.get(`/api/persons/:id`, (request, response) => {
   const id = Number(request.params.id);
   const person = data.find((person) => person.id === id);
 
