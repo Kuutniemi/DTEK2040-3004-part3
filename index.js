@@ -93,8 +93,8 @@ app.post("/api/persons", (request, response) => {
 
   yhteystieto.save().then((response) => {
     console.log(yhteystieto);
-    update;
     mongoose.connection.close();
+    update;
   });
 });
 
