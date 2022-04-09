@@ -4,6 +4,9 @@ const bodyParser = require("body-parser");
 //const yhteystiedot = require("./db.json");
 const mongoose = require("mongoose");
 require("dotenv").config();
+const cors = require("cors");
+
+app.use(cors());
 
 const url = process.env.MONGO;
 
@@ -92,13 +95,7 @@ app.post("/api/persons", (request, response) => {
   });
 
   yhteystieto.save().then((response) => {
-    console.log(
-      "Nimi:",
-      process.argv[2],
-      "numerolla",
-      process.argv[3],
-      "lisattiin onnistuneesti"
-    );
+    console.log(yhteystieto);
     update;
     mongoose.connection.close();
   });
