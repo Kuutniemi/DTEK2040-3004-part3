@@ -63,17 +63,6 @@ app.delete(`/api/persons/:id`, (request, response) => {
   update;
 });
 
-const generateId = () => {
-  const maxId =
-    data.length > 0
-      ? data
-          .map((n) => n.id)
-          .sort((a, b) => a - b)
-          .reverse()[0]
-      : 1;
-  return maxId + 1;
-};
-
 app.post("/api/persons", (request, response) => {
   mongoose.connect(url);
   const body = request.body;
@@ -84,6 +73,17 @@ app.post("/api/persons", (request, response) => {
   if (body.number === undefined) {
     return response.status(400).json({ error: "Numero ei voi olla tyhjä" });
   }
+
+  const generateId = () => {
+    const maxId =
+      data.length > 0
+        ? data
+            .map((n) => n.id)
+            .sort((a, b) => a - b)
+            .reverse()[0]
+        : 1;
+    return maxId + 1;
+  };
 
   const yhteystieto = new Yhteystieto({
     name: body.name,
