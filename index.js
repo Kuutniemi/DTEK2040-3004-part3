@@ -4,10 +4,8 @@ const bodyParser = require("body-parser");
 //const yhteystiedot = require("./db.json");
 const mongoose = require("mongoose");
 require("dotenv").config();
-const cors = require("cors");
 
-app.use(cors());
-
+app.use(allowCrossDomain);
 const url = process.env.MONGO;
 
 mongoose.connect(url);
