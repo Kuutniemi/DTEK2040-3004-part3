@@ -14,6 +14,7 @@ const formatYht = (yht) => {
   };
 };
 
+app.use(express.static("build"));
 app.use(bodyParser.json());
 const cors = require("cors");
 app.use(cors());
