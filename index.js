@@ -1,70 +1,28 @@
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
-//const yhteystiedot = require("./db.json");
 const mongoose = require("mongoose");
 require("dotenv").config();
 
-const url = process.env.MONGO;
+const Yhteystieto = require(`./components/Yhteystiedotdb`);
 
-mongoose.connect(url);
-
-let data = [];
-
-const Yhteystieto = mongoose.model("Yhteystieto", {
-  name: String,
-  number: Number,
-  id: Number,
-});
-
-const update = Yhteystieto.find({}).then((result) => {
-  result.forEach((yht) => {
-    data.push(yht);
-  });
-  mongoose.connection.close();
-  //console.log(data);
-});
+const formatYht = (yht) => {
+  return {
+    name: yht.name,
+    number: yht.number,
+    id: yht._id,
+  };
+};
 
 app.use(bodyParser.json());
-const cors = require("cors");
 
-app.use(cors());
-
-app.get("/", (req, res) => {
-  res.send("<h1>Hello World!</h1>");
-});
-
-app.get("/api", (req, res) => {
-  update;
-  res.json(data);
-});
-
-app.get("/api/persons", (req, res) => {
-  update;
-  res.json(data);
-});
-
-app.get(`/api/persons/:id`, (request, response) => {
-  const id = Number(request.params.id);
-  const person = data.find((person) => person.id === id);
-
-  if (person) {
-    response.json(person);
-  } else {
-    response.status(404).end();
-  }
-});
-
-app.delete(`/api/persons/:id`, (request, response) => {
-  const id = Number(request.params.id);
-  persons = data.persons.filter((person) => person.id !== id);
-
-  response.status(204).end();
-  update;
+app.get("/api/persons", (request, response) => {
+  Yhteystieto.find({}, { __v: 0 }).then((notes) => {
+    response.json(notes.map(formatYht));
+  });
 });
 
 app.post("/api/persons", (request, response) => {
-  mongoose.connect(url);
   const body = request.body;
 
   if (body.name === undefined) {
@@ -74,28 +32,39 @@ app.post("/api/persons", (request, response) => {
     return response.status(400).json({ error: "Numero ei voi olla tyhjä" });
   }
 
-  const generateId = () => {
-    const maxId =
-      data.length > 0
-        ? data
-            .map((n) => n.id)
-            .sort((a, b) => a - b)
-            .reverse()[0]
-        : 1;
-    return maxId + 1;
-  };
-
   const yhteystieto = new Yhteystieto({
     name: body.name,
     number: body.number,
-    id: generateId(),
   });
 
-  yhteystieto.save().then((response) => {
-    console.log(yhteystieto);
-    update;
-    mongoose.connection.close();
+  yhteystieto.save().then((yht) => {
+    response.json(formatYht(yht));
   });
+});
+
+app.get("/api/persons/:id", (request, response) => {
+  Yhteystieto.findById(request.params.id)
+    .then((yht) => {
+      if (yht) {
+        response.json(formatYht(yht));
+      } else {
+        response.status(404).end();
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      response.status(400).send({ error: "malformatted id" });
+    });
+});
+
+app.delete("/api/persons/:id", (request, response) => {
+  Yhteystieto.findByIdAndRemove(request.params.id)
+    .then((result) => {
+      response.status(204).end();
+    })
+    .catch((error) => {
+      response.status(400).send({ error: "malformatted id" });
+    });
 });
 
 const PORT = process.env.PORT || 3002;
