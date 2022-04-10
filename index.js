@@ -15,6 +15,8 @@ const formatYht = (yht) => {
 };
 
 app.use(bodyParser.json());
+const cors = require("cors");
+app.use(cors());
 
 app.get("/api/persons", (request, response) => {
   Yhteystieto.find({}, { __v: 0 }).then((notes) => {
